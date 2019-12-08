@@ -8,7 +8,8 @@ ciphers = {"caesar": CaesarCipher}
 
 def main(cipher_name: str, process: str, key: int, input_file: Path, output_file: Path):
     cipher = ciphers.get(cipher_name)
-    with open(input_file, "rb") as f:
+    # with open(input_file, "rb") as f:
+    with open(input_file, "r") as f:
         text = f.read()
 
     if cipher is None:
@@ -24,8 +25,11 @@ def main(cipher_name: str, process: str, key: int, input_file: Path, output_file
     else:
         raise Exception("No such process")
 
-    with open(output_file, "wb") as f:
-        f.write(result.encode("utf-8"))
+    with open(output_file, "w") as f:
+        f.write(result)
+    # with open(output_file, "wb") as f:
+        # f.write(result.encode("utf-8"))
+
 
 
 if __name__ == "__main__":
@@ -39,7 +43,7 @@ if __name__ == "__main__":
         "--output_file",
         help="file to store result",
         required=False,
-        default=Path("app/output.txt"),
+        default=Path("output.txt"),
         type=Path,
     )
     args = parser.parse_args()
