@@ -2,13 +2,16 @@ import argparse
 from pathlib import Path
 
 from ciphers.caesar_cipher import CaesarCipher
+from ciphers.trithemius_cipher import TrithemiusCipher
 
-ciphers = {"caesar": CaesarCipher}
+ciphers = {
+    "caesar": CaesarCipher,
+    "trithemius": TrithemiusCipher,
+}
 
 
 def main(cipher_name: str, process: str, key: int, input_file: Path, output_file: Path):
     cipher = ciphers.get(cipher_name)
-    # with open(input_file, "rb") as f:
     with open(input_file, "r") as f:
         text = f.read()
 
@@ -20,16 +23,11 @@ def main(cipher_name: str, process: str, key: int, input_file: Path, output_file
         result = cipher_obj.encrypt(text, key)
     elif process == "decrypt":
         result = cipher_obj.decrypt(text, key)
-    elif process == "bruteforce":
-        result = cipher_obj.brute_force(text)
     else:
         raise Exception("No such process")
 
     with open(output_file, "w") as f:
         f.write(result)
-    # with open(output_file, "wb") as f:
-        # f.write(result.encode("utf-8"))
-
 
 
 if __name__ == "__main__":
