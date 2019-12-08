@@ -1,6 +1,7 @@
 import argparse
 from pathlib import Path
 
+from ciphers.base_cipher import BaseCipher
 from ciphers.caesar_cipher import CaesarCipher
 from ciphers.trithemius_cipher import TrithemiusCipher
 
@@ -10,13 +11,18 @@ ciphers = {
 }
 
 
-def main(cipher_name: str, process: str, key: int, input_file: Path, output_file: Path):
+def main(cipher_name: str, process: str, key: int, input_file: Path, output_file: Path, key_file: Path):
     cipher = ciphers.get(cipher_name)
     with open(input_file, "r") as f:
         text = f.read()
 
     if cipher is None:
         raise Exception("No such cipher")
+
+    if key_file:
+        with open(key_file) as f:
+            key = f.read()
+        key = BaseCipher.parse_key(key)
 
     cipher_obj = cipher()
     if process == "encrypt":
@@ -36,6 +42,7 @@ if __name__ == "__main__":
     parser.add_argument("--cipher", help="cipher name", required=True, type=str)
     parser.add_argument("--process", help="process", required=True, type=str)
     parser.add_argument("--key", help="key", required=False, default=0, type=int)
+    parser.add_argument("--key_file", help="key", required=False, default=0, type=Path)
     parser.add_argument("--input_file", help="file with text", required=True, type=Path)
     parser.add_argument(
         "--output_file",
@@ -50,5 +57,6 @@ if __name__ == "__main__":
     key = args.key
     input_file = args.input_file
     output_file = args.output_file
+    key_file = args.key_file
 
-    main(cipher, process, key, input_file, output_file)
+    main(cipher, process, key, input_file, output_file, key_file)

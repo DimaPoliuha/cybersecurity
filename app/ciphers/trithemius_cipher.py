@@ -1,21 +1,18 @@
+import itertools
 from ciphers.base_cipher import BaseCipher
 
 
 class TrithemiusCipher(BaseCipher):
-    def encrypt(self, text: bytes, key: int) -> str:
+    def _algorithm(self, text: str, key: int, process: str) -> str:
         result_text = ""
-        for symbol in text:
-            encrypted_symbol_code = ord(symbol) + key
-            if encrypted_symbol_code > self.UNICODE_COUNT or encrypted_symbol_code < 0:
-                encrypted_symbol_code = encrypted_symbol_code % self.UNICODE_COUNT
-            result_text += chr(encrypted_symbol_code)
-        return result_text
-
-    def decrypt(self, text: bytes, key: int):
-        result_text = ""
-        for symbol in text:
-            decrypted_symbol_code = ord(symbol) - key
-            if decrypted_symbol_code > self.UNICODE_COUNT or decrypted_symbol_code < 0:
-                decrypted_symbol_code = decrypted_symbol_code % self.UNICODE_COUNT
-            result_text += chr(decrypted_symbol_code)
+        for symbol, key_code in zip(text, itertools.cycle(key)):
+            if process == "encrypt":
+                symbol_code = ord(symbol) + key_code
+            elif process == "decrypt":
+                symbol_code = ord(symbol) - key_code
+            else:
+                raise Exception("No such process")
+            if symbol_code > self.UNICODE_COUNT or symbol_code < 0:
+                symbol_code = symbol_code % self.UNICODE_COUNT
+            result_text += chr(symbol_code)
         return result_text
