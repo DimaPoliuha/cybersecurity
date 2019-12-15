@@ -4,16 +4,17 @@ from xor_cipher import XORCipher
 
 
 def main(process, input_file, output_file, key_file):
-    with open(input_file, "r") as f:
-        text = f.read()
-
     cipher_obj = XORCipher()
     if process == "encrypt":
+        with open(input_file, "r") as f:
+            text = f.read()
         key, key_f = cipher_obj.generate_key()
         with open(key_file, "wb") as f:
             f.write(key_f)
         result = cipher_obj.encrypt(text, key)
     elif process == "decrypt":
+        with open(input_file, "rb") as f:
+            text = f.read().decode('utf-16', 'surrogatepass')
         with open(key_file, "rb") as f:
             key = f.read()
         key = (ord(symbol) for symbol in key.decode('utf-16', 'surrogatepass'))
@@ -21,8 +22,8 @@ def main(process, input_file, output_file, key_file):
     else:
         raise Exception("No such process")
 
-    with open(output_file, "w") as f:
-        f.write(result)
+    with open(output_file, "wb") as f:
+        f.write(result.encode('utf-16','surrogatepass'))
 
 
 if __name__ == "__main__":
