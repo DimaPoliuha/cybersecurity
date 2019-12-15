@@ -17,7 +17,7 @@ def main(process: str, input_file: Path, output_file: Path, key_file: Path):
     elif process == "decrypt":
         with open(key_file, "rb") as f:
             key = f.read()
-        key = (ord(symbol) for symbol in key.decode('utf-16'))
+        key = (ord(symbol) for symbol in key.decode('utf-16', 'surrogatepass'))
         result = cipher_obj.decrypt(text, key)
     else:
         raise Exception("No such process")
