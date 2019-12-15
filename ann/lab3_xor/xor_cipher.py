@@ -1,19 +1,25 @@
 import itertools
-from cipher.base_cipher import BaseCipher
 from random import randint
 
 
-class XORCipher(BaseCipher):
-    def _algorithm(self, text: str, key, process: str) -> str:
+class XORCipher:
+    UNICODE_COUNT = 1114111
+
+    def encrypt(self, text: str, key: int) -> str:
         result_text = ""
         keys = itertools.cycle(key)
         for symbol, key_code in zip(text, keys):
-            if process == "encrypt":
-                symbol_code = ord(symbol) + key_code
-            elif process == "decrypt":
-                symbol_code = ord(symbol) - key_code
-            else:
-                raise Exception("No such process")
+            symbol_code = ord(symbol) + key_code
+            if symbol_code > self.UNICODE_COUNT or symbol_code < 0:
+                symbol_code = symbol_code % self.UNICODE_COUNT
+            result_text += chr(symbol_code)
+        return result_text
+
+    def decrypt(self, text: str, key: int) -> str:
+        result_text = ""
+        keys = itertools.cycle(key)
+        for symbol, key_code in zip(text, keys):
+            symbol_code = ord(symbol) - key_code
             if symbol_code > self.UNICODE_COUNT or symbol_code < 0:
                 symbol_code = symbol_code % self.UNICODE_COUNT
             result_text += chr(symbol_code)
