@@ -20,3 +20,17 @@ class TrithemiusCipher(BaseCipher):
                 symbol_code = symbol_code % self.UNICODE_COUNT
             result_text += chr(symbol_code)
         return result_text
+
+    @staticmethod
+    def parse_key(key_file, a, b, c):
+        if a is not None and b is not None and c is not None:
+            key = lambda x: a * x ** 2 + b * x + c
+        elif a is not None and b is not None:
+            key = lambda x: a * x + b
+        elif key_file:
+            with open(key_file) as f:
+                key = f.read()
+            key = [ord(symbol) for symbol in key]
+        else:
+            raise ValueError("Specify key")
+        return key

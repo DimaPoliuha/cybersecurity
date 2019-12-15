@@ -4,7 +4,7 @@ from pathlib import Path
 from cipher.trithemius_cipher import TrithemiusCipher
 
 
-def main(process: str, input_file: Path, output_file: Path, key: list):
+def main(process: str, input_file: Path, output_file: Path, key):
     with open(input_file, "r") as f:
         text = f.read()
 
@@ -51,20 +51,11 @@ if __name__ == "__main__":
     b = args.b
     c = args.c
 
+    key = TrithemiusCipher.parse_key(key_file, a, b, c)
+
     if not input_file:
         input_file = Path("results/input.txt") if process == "encrypt" else Path("results/encrypted.txt")
     if not output_file:
         output_file = Path("results/encrypted.txt") if process == "encrypt" else Path("results/decrypted.txt")
-
-    if a is not None and b is not None and c is not None:
-        key = lambda x: a * x ** 2 + b * x + c
-    elif a is not None and b is not None:
-        key = lambda x: a * x + b
-    elif key_file:
-        with open(key_file) as f:
-            key = f.read()
-        key = [ord(symbol) for symbol in key]
-    else:
-        raise ValueError("Specify key")
 
     main(process, input_file, output_file, key)
