@@ -1,17 +1,23 @@
 import argparse
 from pathlib import Path
 
-from cipher.caesar_cipher import CaesarCipher
+from cipher.xor_cipher import XORCipher
 
 
-def main(process: str, key: int, input_file: Path, output_file: Path):
+def main(process: str, input_file: Path, output_file: Path, key_file: Path):
     with open(input_file, "r") as f:
         text = f.read()
 
-    cipher_obj = CaesarCipher()
+    cipher_obj = XORCipher()
     if process == "encrypt":
+        key, key_f = XORCipher.generate_key()
+        with open(key_file, "wb") as f:
+            f.write(key_f)
         result = cipher_obj.encrypt(text, key)
     elif process == "decrypt":
+        with open(key_file, "rb") as f:
+            key = f.read()
+        key = (ord(symbol) for symbol in key.decode('utf-16', 'surrogatepass'))
         result = cipher_obj.decrypt(text, key)
     else:
         raise Exception("No such process")
@@ -21,10 +27,10 @@ def main(process: str, key: int, input_file: Path, output_file: Path):
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Caesar cipher")
+    parser = argparse.ArgumentParser(description="XOR cipher")
 
-    parser.add_argument("--process", help="encrypt/decrypt", required=True, type=str)
-    parser.add_argument("--key", help="key", required=True, type=int)
+    parser.add_argument("--process", help="process", required=True, type=str)
+    parser.add_argument("--key_file", help="key", required=False, default=Path("results/key.txt"), type=Path)
     parser.add_argument(
         "--input_file", 
         help="file with text",
@@ -41,12 +47,13 @@ if __name__ == "__main__":
     )
     args = parser.parse_args()
     process = args.process
-    key = args.key
     input_file = args.input_file
     output_file = args.output_file
+    key_file = args.key_file
+
     if not input_file:
         input_file = Path("results/input.txt") if process == "encrypt" else Path("results/encrypted.txt")
     if not output_file:
         output_file = Path("results/encrypted.txt") if process == "encrypt" else Path("results/decrypted.txt")
 
-    main(process, key, input_file, output_file)
+    main(process, input_file, output_file, key_file)
