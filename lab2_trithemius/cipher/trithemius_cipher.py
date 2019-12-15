@@ -3,9 +3,13 @@ from cipher.base_cipher import BaseCipher
 
 
 class TrithemiusCipher(BaseCipher):
-    def _algorithm(self, text: str, key: int, process: str) -> str:
+    def _algorithm(self, text: str, key, process: str) -> str:
         result_text = ""
-        for symbol, key_code in zip(text, itertools.cycle(key)):
+        if type(key) == list:
+            keys = itertools.cycle(key)
+        else:
+            keys = (key(index) for index in range(len(text)))
+        for symbol, key_code in zip(text, keys):
             if process == "encrypt":
                 symbol_code = ord(symbol) + key_code
             elif process == "decrypt":

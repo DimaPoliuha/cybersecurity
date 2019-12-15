@@ -4,14 +4,9 @@ from pathlib import Path
 from cipher.trithemius_cipher import TrithemiusCipher
 
 
-def main(process: str, input_file: Path, output_file: Path, key_file: Path):
+def main(process: str, input_file: Path, output_file: Path, key: list):
     with open(input_file, "r") as f:
         text = f.read()
-
-    if key_file:
-        with open(key_file) as f:
-            key = f.read()
-        key = TrithemiusCipher.parse_key(key)
 
     cipher_obj = TrithemiusCipher()
     if process == "encrypt":
@@ -30,6 +25,9 @@ if __name__ == "__main__":
 
     parser.add_argument("--process", help="process", required=True, type=str)
     parser.add_argument("--key_file", help="key", required=False, default=Path("results/key.txt"), type=Path)
+    parser.add_argument("--a", required=False, default=None, type=int)
+    parser.add_argument("--b", required=False, default=None, type=int)
+    parser.add_argument("--c", required=False, default=None, type=int)    
     parser.add_argument(
         "--input_file", 
         help="file with text",
@@ -49,10 +47,24 @@ if __name__ == "__main__":
     input_file = args.input_file
     output_file = args.output_file
     key_file = args.key_file
+    a = args.a
+    b = args.b
+    c = args.c
 
     if not input_file:
         input_file = Path("results/input.txt") if process == "encrypt" else Path("results/encrypted.txt")
     if not output_file:
         output_file = Path("results/encrypted.txt") if process == "encrypt" else Path("results/decrypted.txt")
 
-    main(process, input_file, output_file, key_file)
+    if a is not None and b is not None and c is not None:
+        key = lambda x: a * x ** 2 + b * x + c
+    elif a is not None and b is not None:
+        key = lambda x: a * x + b
+    elif key_file:
+        with open(key_file) as f:
+            key = f.read()
+        key = [ord(symbol) for symbol in key]
+    else:
+        raise ValueError("Specify key")
+
+    main(process, input_file, output_file, key)

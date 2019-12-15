@@ -12,7 +12,3 @@ class BaseCipher(ABC):
 
     def _algorithm(self, text: str, key: int, process: str) -> str:
         pass
-
-    @staticmethod
-    def parse_key(key: str) -> list:
-        return [ord(symbol) for symbol in key]
