@@ -9,7 +9,7 @@ def main(process, input_file, output_file, key_file):
 
     cipher_obj = XORCipher()
     if process == "encrypt":
-        key, key_f = XORCipher.generate_key()
+        key, key_f = cipher_obj.generate_key()
         with open(key_file, "wb") as f:
             f.write(key_f)
         result = cipher_obj.encrypt(text, key)

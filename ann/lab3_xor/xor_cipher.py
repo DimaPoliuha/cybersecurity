@@ -25,8 +25,7 @@ class XORCipher:
             result_text += chr(symbol_code)
         return result_text
 
-    @classmethod
-    def generate_key(cls):
-        key = [randint(0, cls.UNICODE_COUNT) for _ in range(randint(100, 1000))]
+    def generate_key(self):
+        key = [randint(0, self.UNICODE_COUNT) for _ in range(randint(100, 1000))]
         key_f = "".join(map(chr, key)).encode('utf-16','surrogatepass')
         return key, key_f
