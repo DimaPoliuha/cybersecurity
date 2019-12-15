@@ -1,10 +1,9 @@
 import argparse
-from pathlib import Path
 
-from cipher.trithemius_cipher import TrithemiusCipher
+from trithemius_cipher import TrithemiusCipher
 
 
-def main(process: str, input_file: Path, output_file: Path, key):
+def main(process, input_file, output_file, key):
     with open(input_file, "r") as f:
         text = f.read()
 
@@ -23,25 +22,13 @@ def main(process: str, input_file: Path, output_file: Path, key):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Trithemius cipher")
 
-    parser.add_argument("--process", help="process", required=True, type=str)
-    parser.add_argument("--key_file", help="key", required=False, default=Path("results/key.txt"), type=Path)
+    parser.add_argument("--process", required=True)
+    parser.add_argument("--key_file", required=False, default="results/key.txt")
     parser.add_argument("--a", required=False, default=None, type=int)
     parser.add_argument("--b", required=False, default=None, type=int)
     parser.add_argument("--c", required=False, default=None, type=int)    
-    parser.add_argument(
-        "--input_file", 
-        help="file with text",
-        required=False,
-        default=None,
-        type=Path
-    )
-    parser.add_argument(
-        "--output_file",
-        help="file to store result",
-        required=False,
-        default=None,
-        type=Path,
-    )
+    parser.add_argument("--input_file", required=False, default=None)
+    parser.add_argument("--output_file", required=False, default=None)
     args = parser.parse_args()
     process = args.process
     input_file = args.input_file
@@ -51,11 +38,18 @@ if __name__ == "__main__":
     b = args.b
     c = args.c
 
-    key = TrithemiusCipher.parse_key(key_file, a, b, c)
+    if a is not None and b is not None and c is not None:
+        key = lambda x: a * x ** 2 + b * x + c
+    elif a is not None and b is not None:
+        key = lambda x: a * x + b
+    elif key_file:
+        with open(key_file) as f:
+            key = f.read()
+        key = [ord(symbol) for symbol in key]
 
     if not input_file:
-        input_file = Path("results/input.txt") if process == "encrypt" else Path("results/encrypted.txt")
+        input_file = "results/input.txt" if process == "encrypt" else "results/encrypted.txt"
     if not output_file:
-        output_file = Path("results/encrypted.txt") if process == "encrypt" else Path("results/decrypted.txt")
+        output_file = "results/encrypted.txt" if process == "encrypt" else "results/decrypted.txt"
 
     main(process, input_file, output_file, key)
