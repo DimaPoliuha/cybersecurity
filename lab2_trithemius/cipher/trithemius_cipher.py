@@ -1,5 +1,5 @@
 import itertools
-from ciphers.base_cipher import BaseCipher
+from cipher.base_cipher import BaseCipher
 
 
 class TrithemiusCipher(BaseCipher):
