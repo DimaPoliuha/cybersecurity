@@ -5,19 +5,20 @@ from cipher.trithemius_cipher import TrithemiusCipher
 
 
 def main(process: str, input_file: Path, output_file: Path, key):
-    with open(input_file, "r") as f:
-        text = f.read()
-
     cipher_obj = TrithemiusCipher()
     if process == "encrypt":
+        with open(input_file, "r") as f:
+            text = f.read()
         result = cipher_obj.encrypt(text, key)
     elif process == "decrypt":
+        with open(input_file, "rb") as f:
+            text = f.read().decode('utf-16', 'surrogatepass')
         result = cipher_obj.decrypt(text, key)
     else:
         raise Exception("No such process")
 
-    with open(output_file, "w") as f:
-        f.write(result)
+    with open(output_file, "wb") as f:
+        f.write(result.encode('utf-16','surrogatepass'))
 
 
 if __name__ == "__main__":

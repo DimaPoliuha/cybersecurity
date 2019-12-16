@@ -20,7 +20,7 @@ class XORCipher(BaseCipher):
         return result_text
 
     @classmethod
-    def generate_key(cls):
-        key = [randint(0, cls.UNICODE_COUNT) for _ in range(randint(100, 1000))]
-        key_f = "".join(map(chr, key)).encode('utf-16','surrogatepass')
+    def generate_key(cls, len_t):
+        key = [randint(0, cls.UNICODE_COUNT) for _ in range(len_t + randint(100, 1000))]
+        key_f = "".join(map(chr, key)).encode('utf-16', 'surrogatepass')
         return key, key_f

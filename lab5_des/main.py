@@ -1,34 +1,31 @@
 import argparse
 from pathlib import Path
 
-from cipher.xor_cipher import XORCipher
+from cipher.des_cipher import DesCipher
 
 
 def main(process: str, input_file: Path, output_file: Path, key_file: Path):
-    cipher_obj = XORCipher()
+    with open(input_file, "r") as f:
+        text = f.read()
+    with open(key_file, "r") as f:
+        key = f.read()
+    cipher_obj = DesCipher()
     if process == "encrypt":
-        with open(input_file, "r") as f:
-            text = f.read()
-        key, key_f = XORCipher.generate_key(len(text))
-        with open(key_file, "wb") as f:
-            f.write(key_f)
         result = cipher_obj.encrypt(text, key)
     elif process == "decrypt":
-        with open(input_file, "rb") as f:
-            text = f.read().decode('utf-16', 'surrogatepass')
-        with open(key_file, "rb") as f:
-            key = f.read()
-        key = (ord(symbol) for symbol in key.decode('utf-16', 'surrogatepass'))
         result = cipher_obj.decrypt(text, key)
     else:
         raise Exception("No such process")
+
+    with open(output_file, "w") as f:
+        f.write(result)
 
     with open(output_file, "wb") as f:
         f.write(result.encode('utf-16', 'surrogatepass'))
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="XOR cipher")
+    parser = argparse.ArgumentParser(description="DES cipher")
 
     parser.add_argument("--process", help="process", required=True, type=str)
     parser.add_argument("--key_file", help="key", required=False, default=Path("results/key.txt"), type=Path)
